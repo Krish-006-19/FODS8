@@ -65,7 +65,7 @@ public:
     void inorder(TreeNode* root) {
         Stack st;
         TreeNode* curr = root;
-        while (curr || !st.isEmpty()) {
+        while (!st.isEmpty() || curr) {
             while (curr) {
                 st.push(curr);
                 curr = curr->left;
@@ -90,38 +90,34 @@ public:
         cout << "\n";
     }
 
-    int height(TreeNode* n) {
-        return n ? n->height : 0;
-    }
+    int height(TreeNode* n) { return n ? n->height : 0; }
 
     int getBalance(TreeNode* n) {
         return n ? height(n->left) - height(n->right) : 0;
     }
 
-    TreeNode* rotateRight(TreeNode* y) {
-        TreeNode* x = y->left;
-        TreeNode* T2 = x->right;
-
-        x->right = y;
-        y->left = T2;
-
-        y->height = max(height(y->left), height(y->right)) + 1;
-        x->height = max(height(x->left), height(x->right)) + 1;
-
-        return x;
+    TreeNode* rotateRight(TreeNode* unbalancedNode) {
+        TreeNode* leftChild = unbalancedNode->left;
+        TreeNode* leftChildRightSubtree = leftChild->right;
+    
+        leftChild->right = unbalancedNode;
+        unbalancedNode->left = leftChildRightSubtree;
+    
+        unbalancedNode->height = 1 + max(height(unbalancedNode->left), height(unbalancedNode->right));
+        leftChild->height = 1 + max(height(leftChild->left), height(leftChild->right));
+        return leftChild;
     }
-
-    TreeNode* rotateLeft(TreeNode* x) {
-        TreeNode* y = x->right;
-        TreeNode* T2 = y->left;
-
-        y->left = x;
-        x->right = T2;
-
-        x->height = max(height(x->left), height(x->right)) + 1;
-        y->height = max(height(y->left), height(y->right)) + 1;
-
-        return y;
+    
+    TreeNode* rotateLeft(TreeNode* unbalancedNode) {
+        TreeNode* rightChild = unbalancedNode->right;
+        TreeNode* rightChildLeftSubtree = rightChild->left;
+    
+        rightChild->left = unbalancedNode;
+        unbalancedNode->right = rightChildLeftSubtree;
+    
+        unbalancedNode->height = 1 + max(height(unbalancedNode->left), height(unbalancedNode->right));
+        rightChild->height = 1 + max(height(rightChild->left), height(rightChild->right));
+        return rightChild;
     }
 
     TreeNode* addNode(TreeNode* root, int key){
@@ -189,7 +185,6 @@ public:
         return root;
     }
 
-
     TreeNode* searchNode(TreeNode* root, int key){
         TreeNode* curr = root;
         while(curr){
@@ -206,7 +201,6 @@ public:
         root = addNode(root, newVal);
         return true;
     }
-
 
     TreeNode* deleteNode(TreeNode* root, int key){
         if(!root) return NULL;
@@ -273,14 +267,9 @@ public:
             } 
             else root = node;
         }
-
         return root;
     }
-
-  
-    
 };
-
 
 int valueChecker() {
     int choice;
@@ -306,7 +295,6 @@ int valueCheckerBT() {
     }
     return val;
 }
-
 
 int main() {
     AVL tree;

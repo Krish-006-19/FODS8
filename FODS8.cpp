@@ -127,17 +127,17 @@ public:
     TreeNode* addNode(TreeNode* root, int key){
         if(!root) return new TreeNode(key);
 
-        Stack path;
+        Stack st;
         TreeNode* curr = root;
         TreeNode* parent = NULL;
         bool inserted = false;
 
         while(!inserted){
-            path.push(curr);
+            st.push(curr);
             if(key < curr->val){
                 if(!curr->left){
                     curr->left = new TreeNode(key);
-                    path.push(curr->left);
+                    st.push(curr->left);
                     inserted = true;
                 }
                 else curr = curr->left;
@@ -145,7 +145,7 @@ public:
             else if(key > curr->val){
                 if(!curr->right){
                     curr->right = new TreeNode(key);
-                    path.push(curr->right);
+                    st.push(curr->right);
                     inserted = true;
                 } 
                 else curr = curr->right;
@@ -156,8 +156,8 @@ public:
             }
         }
 
-        while(!path.isEmpty()){
-            TreeNode* node = path.pop();
+        while(!st.isEmpty()){
+            TreeNode* node = st.pop();
             node->height = 1 + max(height(node->left), height(node->right));
             int balance = getBalance(node);
 
@@ -178,8 +178,8 @@ public:
                 }
             }
 
-            if(!path.isEmpty()){
-                TreeNode* parent = path.top();
+            if(!st.isEmpty()){
+                TreeNode* parent = st.top();
                 if (node->val < parent->val) parent->left = node;
                 else parent->right = node;
             } 
@@ -211,12 +211,12 @@ public:
     TreeNode* deleteNode(TreeNode* root, int key){
         if(!root) return NULL;
 
-        Stack path;
+        Stack st;
         TreeNode* curr = root;
         TreeNode* parent = NULL;
 
         while(curr && curr->val != key){
-            path.push(curr);
+            st.push(curr);
             parent = curr;
             curr = (key < curr->val) ? curr->left : curr->right;
         }
@@ -225,9 +225,9 @@ public:
         if(curr->left && curr->right){
             TreeNode* succParent = curr;
             TreeNode* succ = curr->right;
-            path.push(curr);
+            st.push(curr);
             while(succ->left){
-                path.push(succ);
+                st.push(succ);
                 succParent = succ;
                 succ = succ->left;
             }
@@ -244,8 +244,8 @@ public:
 
         delete curr;
 
-        while(!path.isEmpty()) {
-            TreeNode* node = path.pop();
+        while(!st.isEmpty()) {
+            TreeNode* node = st.pop();
             node->height = max(height(node->left), height(node->right)) + 1;
             int balance = getBalance(node);
 
@@ -266,8 +266,8 @@ public:
                 }
             }
 
-            if(!path.isEmpty()){
-                TreeNode* parent2 = path.top();
+            if(!st.isEmpty()){
+                TreeNode* parent2 = st.top();
                 if (node->val < parent2->val) parent2->left = node;
                 else parent2->right = node;
             } 
